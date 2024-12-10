@@ -1,3 +1,12 @@
-GET http://localhost:3000/places?text=av governador valadares, betim, 1000
+GET http://localhost:3000/places?text=av rua xv de novembro, palmital - PR, 1284
 
 ###
+GET http://localhost:3000/places?text=av Paraná, Laranjal - PR, 462
+
+###
+
+@originId = ChIJ69-FZBRv7pQReDwWmLpl77M
+@destinationId = ChIJ_4ZtMTwO7pQRCX0cUS80cG0
+
+###
+GET http://localhost:3000/directions?originId={{ originId }}&destinationId={{ destinationId }}
