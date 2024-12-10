@@ -9,6 +9,33 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
+}
+
+model Route {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  source      Place
+  destination Place
+  distance    Float
+  duration    Float
+  directions  Json
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+}
+
+type Place {
+  name     String
+  location Coord
+}
+
+type Point {
+  location   Coord
+  created_at DateTime @default(now())
+}
+
+type Coord {
+  lat Float
+  lng Float
 }
