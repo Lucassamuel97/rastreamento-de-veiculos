@@ -1,4 +1,81 @@
-export function newRoutePage() {
+export async function searchDirections(source: string, destination: string) {
+  //Promise.all para chamadas em paralelo
+  const [sourceResponse, destinationResponse] = await Promise.all([
+    fetch(`http://localhost:3000/places?text=${source}`, {
+      // cache: "force-cache", //default
+      // next: {
+      //   revalidate: 1 * 60 * 60 * 24, // 1 dia
+      // }
+    }),
+    fetch(`http://localhost:3000/places?text=${destination}`, {
+      // cache: "force-cache", //default
+      // next: {
+      //   revalidate: 1 * 60 * 60 * 24, // 1 dia
+      // }
+    }),
+  ]);
+
+  if (!sourceResponse.ok) {
+    console.error(await sourceResponse.text());
+    throw new Error("Failed to fetch source data");
+  }
+
+  if (!destinationResponse.ok) {
+    console.error(await destinationResponse.text());
+    throw new Error("Failed to fetch destination data");
+  }
+
+  const [sourceData, destinationData] = await Promise.all([
+    sourceResponse.json(),
+    destinationResponse.json(),
+  ]);
+
+  const placeSourceId = sourceData.candidates[0].place_id;
+  const placeDestinationId = destinationData.candidates[0].place_id;
+
+  const directionsResponse = await fetch(
+    `http://localhost:3000/directions?originId=${placeSourceId}&destinationId=${placeDestinationId}`,
+    {
+      // cache: "force-cache", //default
+      // next: {
+      //   revalidate: 1 * 60 * 60 * 24, // 1 dia
+      // },
+    }
+  );
+
+  if (!directionsResponse.ok) {
+    console.error(await directionsResponse.text());
+    throw new Error("Failed to fetch directions");
+  }
+
+  const directionsData = await directionsResponse.json();
+
+  return {
+    directionsData,
+    placeSourceId,
+    placeDestinationId,
+  };
+}
+
+export async function NewRoutePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ source: string; destination: string }>;
+}) {
+  const { source, destination } = await searchParams;
+
+  const result =
+    source && destination ? await searchDirections(source, destination) : null;
+  let directionsData = null;
+  let placeSourceId = null;
+  let placeDestinationId = null;
+
+  if (result) {
+    directionsData = result.directionsData;
+    placeSourceId = result.placeSourceId;
+    placeDestinationId = result.placeDestinationId;
+  }
+
   return (
     <div className="flex flex-1 w-full h-full">
       <div className="w-1/3 p-4 h-full">
@@ -10,6 +87,7 @@ export function newRoutePage() {
               name="source"
               type="search"
               placeholder=""
+              defaultValue={source}
               className="block rounded-t-lg px-2.5 pb-2.5 pt-5 w-full text-sm text-contrast bg-default border-0 border-b-2 border-contrast appearance-none focus:outline-none focus:ring-0 focus:border-primary peer"
             />
             <label
@@ -25,6 +103,7 @@ export function newRoutePage() {
               name="destination"
               type="search"
               placeholder=""
+              defaultValue={destination}
               className="block rounded-t-lg px-2.5 pb-2.5 pt-5 w-full text-sm text-contrast bg-default border-0 border-b-2 border-contrast appearance-none focus:outline-none focus:ring-0 focus:border-primary peer"
             />
             <label
@@ -42,22 +121,28 @@ export function newRoutePage() {
           </button>
         </form>
 
-        <div className="mt-4 p-4 border rounded text-contrast">
-          <ul>
-            <li className="mb-2">
-              <strong>Origem:</strong>{" "}
-            </li>
-            <li className="mb-2">
-              <strong>Destino:</strong>{" "}
-            </li>
-            <li className="mb-2">
-              <strong>Distância:</strong>{" "}
-            </li>
-            <li className="mb-2">
-              <strong>Duração:</strong>{" "}
-            </li>
-          </ul>
-        </div>
+        {directionsData && (
+          <div className="mt-4 p-4 border rounded text-contrast">
+            <ul>
+              <li className="mb-2">
+                <strong>Origem:</strong>{" "}
+                {directionsData.routes[0].legs[0].start_address}
+              </li>
+              <li className="mb-2">
+                <strong>Destino:</strong>{" "}
+                {directionsData.routes[0].legs[0].end_address}
+              </li>
+              <li className="mb-2">
+                <strong>Distância:</strong>{" "}
+                {directionsData.routes[0].legs[0].distance.text}
+              </li>
+              <li className="mb-2">
+                <strong>Duração:</strong>{" "}
+                {directionsData.routes[0].legs[0].duration.text}
+              </li>
+            </ul>
+          </div>
+        )}
       </div>
       <div>Mapa</div>
     </div>
