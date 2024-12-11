@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: ./nestjs-api
+      dockerfile: Dockerfile
+    volumes:
+      - ./nestjs-api:/home/node/app
+    ports:
+      - 3000:3000
+    command: npm run start:dev
+    depends_on:
+      - db
+
+  db:
+    build:
+      context: ./nestjs-api/.docker/mongodb
+      dockerfile: Dockerfile
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - 27017:27017
+
+  frontend:
+    build:
+      context: ./next-frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./next-frontend:/home/node/app
+    ports:
+      - 3001:3001
+    environment:
+      - PORT=3001
+      - NEXT_PUBLIC_API_URL=http://api:3000
