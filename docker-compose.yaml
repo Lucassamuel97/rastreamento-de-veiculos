@@ -9,7 +9,9 @@ services:
       - ./nestjs-api:/home/node/app
     ports:
       - 3000:3000
-    command: npm run start:dev
+    # command: npm run start:dev
+    networks:
+      - app-network
     depends_on:
       - db
 
@@ -22,6 +24,8 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: root
     ports:
       - 27017:27017
+    networks:
+      - app-network
 
   frontend:
     build:
@@ -34,3 +38,9 @@ services:
     environment:
       - PORT=3001
       - NEXT_PUBLIC_API_URL=http://api:3000
+    networks:
+      - app-network
+      
+networks:
+  app-network:
+    driver: bridge
