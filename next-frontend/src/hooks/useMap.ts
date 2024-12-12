@@ -12,6 +12,7 @@ export function useMap(containerRef: React.RefObject<HTMLDivElement>) {
         apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
         libraries: ["routes", "geometry", "marker"],
       });
+      console.log("loader", loader);
       const [, , , position] = await Promise.all([
         loader.importLibrary("routes"),
         loader.importLibrary("geometry"),

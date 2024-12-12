@@ -11,8 +11,8 @@ export type MapNewRouteProps = {
 export function MapNewRoute(props: MapNewRouteProps) {
   const { directionsData } = props;
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const map = useMap(mapContainerRef as React.RefObject<HTMLDivElement>);
-
+  const map = useMap(mapContainerRef);
+  console.log("map", map);
   useEffect(() => {
     if (!map || !directionsData) {
       return;
