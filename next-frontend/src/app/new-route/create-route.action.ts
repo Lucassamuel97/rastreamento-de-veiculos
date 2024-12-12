@@ -51,6 +51,7 @@ export async function createRouteAction(state: any, formData: FormData) {
     return { error: "Failed to create route" };
   }
 
+  //Para recarregar o cache da lista de rotas
   revalidateTag("routes");
 
   return { success: true };
