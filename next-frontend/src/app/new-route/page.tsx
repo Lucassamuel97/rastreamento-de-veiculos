@@ -1,18 +1,15 @@
+import { MapNewRoute } from "./MapNewRoute";
 import { NewRouteForm } from "./NewRouteForm";
 
 export async function searchDirections(source: string, destination: string) {
-  //Promise.all para chamadas em paralelo
-
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
   const [sourceResponse, destinationResponse] = await Promise.all([
-    fetch(`${apiUrl}/places?text=${source}`, {
+    fetch(`http://localhost:3000/places?text=${source}`, {
       // cache: "force-cache", //default
       // next: {
       //   revalidate: 1 * 60 * 60 * 24, // 1 dia
       // }
     }),
-    fetch(`${apiUrl}/places?text=${destination}`, {
+    fetch(`http://localhost:3000/places?text=${destination}`, {
       // cache: "force-cache", //default
       // next: {
       //   revalidate: 1 * 60 * 60 * 24, // 1 dia
@@ -39,7 +36,7 @@ export async function searchDirections(source: string, destination: string) {
   const placeDestinationId = destinationData.candidates[0].place_id;
 
   const directionsResponse = await fetch(
-    `${apiUrl}/directions?originId=${placeSourceId}&destinationId=${placeDestinationId}`,
+    `http://localhost:3000/directions?originId=${placeSourceId}&destinationId=${placeDestinationId}`,
     {
       // cache: "force-cache", //default
       // next: {
@@ -125,7 +122,6 @@ export async function NewRoutePage({
             Pesquisar
           </button>
         </form>
-
         {directionsData && (
           <div className="mt-4 p-4 border rounded text-contrast">
             <ul>
@@ -146,7 +142,6 @@ export async function NewRoutePage({
                 {directionsData.routes[0].legs[0].duration.text}
               </li>
             </ul>
-
             <NewRouteForm>
               {placeSourceId && (
                 <input
@@ -172,7 +167,7 @@ export async function NewRoutePage({
           </div>
         )}
       </div>
-      <div>Mapa</div>
+      <MapNewRoute directionsData={directionsData} />
     </div>
   );
 }
