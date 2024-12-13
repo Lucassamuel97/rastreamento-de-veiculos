@@ -21,15 +21,30 @@ type Route struct {
 	FreightPrice float64      `bson:"freight_price" json:"freight_price"`
 }
 
-type FreightService struct{}
-
-func (fs *FreightService) Calculate(distance int) float64 {
-	return math.Floor((float64(distance)*0.15+0.3)*100) / 100
+func NewRoute(id string, distance int, directions []Directions) Route {
+	return Route{
+		ID:         id,
+		Distance:   distance,
+		Directions: directions,
+	}
 }
 
 type RouteService struct {
 	mongo          *mongo.Client
 	FreightService *FreightService
+}
+
+func NewRouteService(mongo *mongo.Client, freightService *FreightService) *RouteService {
+	return &RouteService{
+		mongo:          mongo,
+		FreightService: freightService,
+	}
+}
+
+type FreightService struct{}
+
+func (fs *FreightService) Calculate(distance int) float64 {
+	return math.Floor((float64(distance)*0.15+0.3)*100) / 100
 }
 
 func (rs *RouteService) CreateRoute(route Route) (Route, error) {
