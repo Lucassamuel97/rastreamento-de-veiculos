@@ -1,4 +1,18 @@
 services:
+  
+  simulator_prod:
+    build:
+      context: .
+      target: final
+      container_name: simulator_prod
+    environment:
+      - MONGO_URI=mongodb://admin:admin@mongo:27017/routes?authSource=admin
+      - KAFKA_BROKER=kafka:9092
+      - KAFKA_ROUTE_TOPIC=route
+      - KAFKA_FREIGHT_TOPIC=freight
+      - KAFKA_SIMULATION_TOPIC=simulation
+      - KAFKA_GROUP_ID=route-group
+    container_name: simulator_prod
   simulator:
     build: 
       context: .
