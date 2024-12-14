@@ -8,7 +8,7 @@ export async function GET(
 ) {
   const { routeId } = await params;
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const apiUrl = process.env.NEST_API_URL;
 
   const response = await fetch(`${apiUrl}/routes/${routeId}`, {
     cache: "force-cache",

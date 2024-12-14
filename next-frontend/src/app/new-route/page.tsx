@@ -3,7 +3,7 @@ import { NewRouteForm } from "./NewRouteForm";
 
 export async function searchDirections(source: string, destination: string) {
   
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const apiUrl = process.env.NEST_API_URL;
 
   const [sourceResponse, destinationResponse] = await Promise.all([
     fetch(`${apiUrl}/places?text=${source}`, {
