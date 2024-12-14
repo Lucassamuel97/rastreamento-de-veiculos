@@ -1,6 +1,5 @@
 import { io } from "socket.io-client";
 
-// Tem que ser Localhost porque o navegador não conecta diretamente com o api:300 
-export const socket = io("http://localhost:3000", {
+export const socket = io(`${process.env.NEXT_PUBLIC_NEST_API_URL}`, {
   autoConnect: false,
 });

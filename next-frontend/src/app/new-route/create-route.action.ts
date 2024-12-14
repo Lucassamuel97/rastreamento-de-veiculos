@@ -6,7 +6,7 @@ import { revalidateTag } from "next/cache";
 export async function createRouteAction(state: any, formData: FormData) {
   const { sourceId, destinationId } = Object.fromEntries(formData);
   
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const apiUrl = process.env.NEST_API_URL;
 
   const directionsResponse = await fetch(
     `${apiUrl}/directions?originId=${sourceId}&destinationId=${destinationId}`,
