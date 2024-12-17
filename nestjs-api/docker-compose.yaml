@@ -9,3 +9,14 @@ services:
       - .:/home/node/app
     ports:
       - 3000:3000
+    depends_on:
+      - mongo
+      - kafka
+    command: npm run start:dev
+  nest-worker:
+    build: .
+    volumes:
+      - .:/home/node/app
+    depends_on:
+      - nest
+    command: npm run start:dev -- --entryFile=cmd/kafka.cmd

@@ -20,3 +20,4 @@ services:
       - kafka
     volumes:
       - .:/app
+    command: go run cmd/simulator/main.go
